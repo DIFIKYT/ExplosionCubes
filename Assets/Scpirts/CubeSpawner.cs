@@ -5,6 +5,7 @@ public class CubeSpawner : MonoBehaviour
 {
     [SerializeField] private Cube _cubePrefab;
     [SerializeField] private Color[] _cubeColors;
+    [SerializeField] private Explosion _explosionManager;
 
     private Cube[] _cubes;
     private int _numberChanceReduction = 2;
@@ -44,11 +45,8 @@ public class CubeSpawner : MonoBehaviour
         renderer.material.color = SelectColor();
 
         AddComponents(components, newCube);
-
-        Array.Resize(ref _cubes, _cubes.Length + 1);
-        _cubes[_cubes.Length - 1] = newCube;
-
-        newCube.MouseButtonPressed += SplitCube;
+        AddCubeInArray(newCube);
+        _explosionManager.Explode(newCube.transform.position);
     }
 
     private void SplitCube(Cube cube)
@@ -80,5 +78,13 @@ public class CubeSpawner : MonoBehaviour
         Color color;
         color = _cubeColors[UnityEngine.Random.Range(0, _cubeColors.Length)];
         return color;
+    }
+
+    private void AddCubeInArray(Cube cube)
+    {
+        Array.Resize(ref _cubes, _cubes.Length + 1);
+        _cubes[_cubes.Length - 1] = cube;
+
+        cube.MouseButtonPressed += SplitCube;
     }
 }
