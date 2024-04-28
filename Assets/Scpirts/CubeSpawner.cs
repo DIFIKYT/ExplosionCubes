@@ -1,13 +1,17 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CubeSpawner : MonoBehaviour
 {
     [SerializeField] private Cube _cubePrefab;
-    [SerializeField] private Color[] _cubeColors;
     [SerializeField] private Explosion _explosionManager;
+    [SerializeField] private List<Color> _cubeColors;
+    [SerializeField] private List<Cube> _cubes;
 
-    private Cube[] _cubes;
+    public event Action<Cube> CubeDestroyed;
+
+    private List<Cube> _spawnedCubes = new List<Cube>();
     private int _numberChanceReduction = 2;
     private int _numberSizeReductions = 2;
     private int _minCountCubesSpawn = 2;
@@ -17,7 +21,6 @@ public class CubeSpawner : MonoBehaviour
 
     private void Awake()
     {
-        _cubes = FindObjectsOfType<Cube>();
         _currentSplitChance = _maxSplitChance;
     }
 
@@ -33,20 +36,16 @@ public class CubeSpawner : MonoBehaviour
             cube.MouseButtonPressed -= SplitCube;
     }
 
-    private void SpawnCube(Cube cube)
+    private Cube SpawnCube(Cube originalCube)
     {
-        Component[] components = cube.GetComponents<Component>();
-        Renderer renderer;
+        Cube newCube = Instantiate(originalCube, originalCube.transform.position, originalCube.transform.rotation);
 
-        Cube newCube = Instantiate(_cubePrefab, cube.transform.position, cube.transform.rotation);
-        newCube.transform.localScale = cube.transform.localScale / _numberSizeReductions;
+        newCube.transform.localScale = originalCube.transform.localScale / _numberSizeReductions;
+        newCube.GetComponent<Renderer>().material.color = SelectColor();
 
-        renderer = newCube.GetComponent<Renderer>();
-        renderer.material.color = SelectColor();
+        AddCubeInList(newCube);
 
-        AddComponents(components, newCube);
-        AddCubeInArray(newCube);
-        _explosionManager.Explode(newCube.transform.position);
+        return newCube;
     }
 
     private void SplitCube(Cube cube)
@@ -56,35 +55,25 @@ public class CubeSpawner : MonoBehaviour
             int countCubesSpawn = UnityEngine.Random.Range(_minCountCubesSpawn, _maxCountCubesSpawn);
 
             for (int i = 0; i < countCubesSpawn; i++)
-                SpawnCube(cube);
+                _spawnedCubes.Add(SpawnCube(cube));
 
             _currentSplitChance /= _numberChanceReduction;
         }
 
+        _explosionManager.Explode(cube.transform.position, _spawnedCubes);
+        CubeDestroyed?.Invoke(cube);
+        _cubes.Remove(cube);
         Destroy(cube.gameObject);
-    }
-
-    private void AddComponents(Component[] components, Cube cube)
-    {
-        foreach (Component component in components)
-        {
-            if (component is not Transform && component is not MeshRenderer && component is not MeshFilter && component is not Cube)
-                cube.gameObject.AddComponent(component.GetType());
-        }
     }
 
     private Color SelectColor()
     {
-        Color color;
-        color = _cubeColors[UnityEngine.Random.Range(0, _cubeColors.Length)];
-        return color;
+        return _cubeColors[UnityEngine.Random.Range(0, _cubeColors.Count)];
     }
 
-    private void AddCubeInArray(Cube cube)
+    private void AddCubeInList(Cube cube)
     {
-        Array.Resize(ref _cubes, _cubes.Length + 1);
-        _cubes[_cubes.Length - 1] = cube;
-
+        _cubes.Add(cube);
         cube.MouseButtonPressed += SplitCube;
     }
 }

@@ -7,6 +7,6 @@ public class Cube : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        MouseButtonPressed?.Invoke(gameObject.GetComponent<Cube>());
+        MouseButtonPressed?.Invoke(this);
     }
 }
