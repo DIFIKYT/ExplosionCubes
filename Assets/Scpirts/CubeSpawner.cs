@@ -64,6 +64,7 @@ public class CubeSpawner : MonoBehaviour
         CubeDestroyed?.Invoke(cube);
         _cubes.Remove(cube);
         Destroy(cube.gameObject);
+        _spawnedCubes.Clear();
     }
 
     private Color SelectColor()
