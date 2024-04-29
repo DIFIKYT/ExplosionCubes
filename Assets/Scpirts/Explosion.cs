@@ -8,16 +8,10 @@ public class Explosion : MonoBehaviour
 
     public void Explode(Vector3 explosionPosition, List<Cube> spawnedCubes)
     {
-        Collider[] colliders = Physics.OverlapSphere(explosionPosition, _explosionRadius);
-
-        foreach (Collider hit in colliders)
+        foreach (Cube cube in spawnedCubes)
         {
-            foreach (Cube cube in spawnedCubes)
-            {
-                if (hit == cube)
-                    if (hit.TryGetComponent(out Rigidbody rigidBody))
-                        rigidBody.AddExplosionForce(_explosionForce, explosionPosition, _explosionRadius);
-            }
+            if (cube.TryGetComponent(out Rigidbody rigidBody))
+                rigidBody.AddExplosionForce(_explosionForce, explosionPosition, _explosionRadius);
         }
     }
 }

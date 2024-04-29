@@ -11,7 +11,6 @@ public class CubeSpawner : MonoBehaviour
 
     public event Action CubeSplit;
 
-    private List<Cube> _spawnedCubes = new List<Cube>();
     private int _numberSizeReductions = 2;
     private int _minCountCubesSpawn = 2;
     private int _maxCountCubesSpawn = 6;
@@ -42,6 +41,7 @@ public class CubeSpawner : MonoBehaviour
 
     private void SplitCube(Cube cube)
     {
+        List<Cube> _spawnedCubes = new List<Cube>();
         int maxSplitChance = 100;
         int minSplitChance = 1;
 
@@ -57,8 +57,9 @@ public class CubeSpawner : MonoBehaviour
 
         _explosionManager.Explode(cube.transform.position, _spawnedCubes);
         _cubes.Remove(cube);
-        Destroy(cube.gameObject);
+        cube.MouseButtonPressed -= SplitCube;
         _spawnedCubes.Clear();
+        Destroy(cube.gameObject);
     }
 
     private Color SelectColor()
