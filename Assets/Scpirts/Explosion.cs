@@ -15,8 +15,8 @@ public class Explosion : MonoBehaviour
             foreach (Cube cube in spawnedCubes)
             {
                 if (hit == cube)
-                    if (hit.TryGetComponent(out Rigidbody rigiBody))
-                        rigiBody.AddExplosionForce(_explosionForce, explosionPosition, _explosionRadius);
+                    if (hit.TryGetComponent(out Rigidbody rigidBody))
+                        rigidBody.AddExplosionForce(_explosionForce, explosionPosition, _explosionRadius);
             }
         }
     }

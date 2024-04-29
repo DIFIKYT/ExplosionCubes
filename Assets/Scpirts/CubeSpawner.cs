@@ -9,20 +9,12 @@ public class CubeSpawner : MonoBehaviour
     [SerializeField] private List<Color> _cubeColors;
     [SerializeField] private List<Cube> _cubes;
 
-    public event Action<Cube> CubeDestroyed;
+    public event Action CubeSplit;
 
     private List<Cube> _spawnedCubes = new List<Cube>();
-    private int _numberChanceReduction = 2;
     private int _numberSizeReductions = 2;
     private int _minCountCubesSpawn = 2;
     private int _maxCountCubesSpawn = 6;
-    private int _maxSplitChance = 100;
-    private int _currentSplitChance;
-
-    private void Awake()
-    {
-        _currentSplitChance = _maxSplitChance;
-    }
 
     private void OnEnable()
     {
@@ -50,18 +42,20 @@ public class CubeSpawner : MonoBehaviour
 
     private void SplitCube(Cube cube)
     {
-        if (UnityEngine.Random.Range(0, _maxSplitChance) <= _currentSplitChance)
+        int maxSplitChance = 100;
+        int minSplitChance = 1;
+
+        if (UnityEngine.Random.Range(minSplitChance, maxSplitChance) <= cube.CurrentSplitChance)
         {
             int countCubesSpawn = UnityEngine.Random.Range(_minCountCubesSpawn, _maxCountCubesSpawn);
 
             for (int i = 0; i < countCubesSpawn; i++)
                 _spawnedCubes.Add(SpawnCube(cube));
 
-            _currentSplitChance /= _numberChanceReduction;
+            CubeSplit?.Invoke();
         }
 
         _explosionManager.Explode(cube.transform.position, _spawnedCubes);
-        CubeDestroyed?.Invoke(cube);
         _cubes.Remove(cube);
         Destroy(cube.gameObject);
         _spawnedCubes.Clear();
