@@ -33,6 +33,7 @@ public class CubeSpawner : MonoBehaviour
 
         newCube.transform.localScale = originalCube.transform.localScale / _numberSizeReductions;
         newCube.GetComponent<Renderer>().material.color = SelectColor();
+        newCube.SplitChance();
 
         AddCubeInList(newCube);
 
@@ -51,8 +52,6 @@ public class CubeSpawner : MonoBehaviour
 
             for (int i = 0; i < countCubesSpawn; i++)
                 _spawnedCubes.Add(SpawnCube(cube));
-
-            CubeSplit?.Invoke();
         }
 
         _explosionManager.Explode(cube.transform.position, _spawnedCubes);

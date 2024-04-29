@@ -1,8 +1,10 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Material))]
 public class Cube : MonoBehaviour
 {
+    [SerializeField] private Material _material;
     [SerializeField] private CubeSpawner _cubeSpawner;
 
     private int _currentSplitplitChance = 100;
@@ -11,23 +13,14 @@ public class Cube : MonoBehaviour
     public event Action<Cube> MouseButtonPressed;
 
     public int CurrentSplitChance => _currentSplitplitChance;
-
-    private void OnEnable()
-    {
-        _cubeSpawner.CubeSplit += SplitChance;
-    }
-
-    private void OnDisable()
-    {
-        _cubeSpawner.CubeSplit -= SplitChance;
-    }
+    public Color Color => _material.color;
 
     private void OnMouseUpAsButton()
     {
         MouseButtonPressed?.Invoke(this);
     }
 
-    private void SplitChance()
+    public void SplitChance()
     {
         _currentSplitplitChance /= _numberChanceReduction;
     }

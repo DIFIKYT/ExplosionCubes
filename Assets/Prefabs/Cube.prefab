@@ -118,4 +118,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc44b652356a7764fba706ded6e539c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   _cubeSpawner: {fileID: 5304936275126056559, guid: 4cec9f7b1d0b64e4b841c0af484d73a9, type: 3}
