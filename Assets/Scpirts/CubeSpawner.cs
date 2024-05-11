@@ -42,7 +42,7 @@ public class CubeSpawner : MonoBehaviour
 
     private void SplitCube(Cube cube)
     {
-        List<Cube> _spawnedCubes = new List<Cube>();
+        List<Cube> _spawnedCubes = new();
         int maxSplitChance = 100;
         int minSplitChance = 1;
 
@@ -52,9 +52,14 @@ public class CubeSpawner : MonoBehaviour
 
             for (int i = 0; i < countCubesSpawn; i++)
                 _spawnedCubes.Add(SpawnCube(cube));
+
+            _explosionManager.ExplodeCreatedCubes(cube.transform.position, _spawnedCubes);
+        }
+        else
+        {
+            _explosionManager.Explode(cube.transform.position, cube.transform.localScale);
         }
 
-        _explosionManager.Explode(cube.transform.position, _spawnedCubes);
         _cubes.Remove(cube);
         cube.MouseButtonPressed -= SplitCube;
         _spawnedCubes.Clear();
